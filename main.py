@@ -9,7 +9,6 @@ Exemplos de execução:
     python main.py --cli    # Executa a interface no terminal
 """
 
-import sys
 import argparse
 from core.engine import GameEngine
 from ui.cli_view import CLIView

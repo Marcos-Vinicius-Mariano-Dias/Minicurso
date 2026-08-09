@@ -26,20 +26,25 @@ class CLIView:
             print("\n==========================================")
             print("      ⚔️  BEM-VINDO À ARENA DE RPG! ⚔️")
             print("==========================================")
-            print(f"Herói: {data['player_name']} (HP: {data['player_health']}/{data['player_max_health']})")
-            print(f"Inimigo: {data['enemy_name']} (HP: {data['enemy_health']}/{data['enemy_max_health']})\n")
+            p_hp = f"{data['player_health']}/{data['player_max_health']}"
+            e_hp = f"{data['enemy_health']}/{data['enemy_max_health']}"
+            print(f"Herói: {data['player_name']} (HP: {p_hp})")
+            print(f"Inimigo: {data['enemy_name']} (HP: {e_hp})\n")
 
         elif event_type == "PLAYER_ATTACKED":
-            print(f"🗡️  {data['attacker']} atacou {data['target']} causando {data['damage']} de dano!")
-            print(f"   --> {data['target']} agora tem {data['target_health']}/{data['target_max_health']} HP.")
+            print(f"🗡️  {data['attacker']} atacou {data['target']} causando {data['damage']} dano!")
+            t_hp = f"{data['target_health']}/{data['target_max_health']}"
+            print(f"   --> {data['target']} agora tem {t_hp} HP.")
 
         elif event_type == "ENEMY_ATTACKED":
-            print(f"🔥 {data['attacker']} contra-atacou causando {data['damage']} de dano em {data['target']}!")
-            print(f"   --> {data['target']} agora tem {data['target_health']}/{data['target_max_health']} HP.")
+            print(f"🔥 {data['attacker']} contra-atacou causando {data['damage']} de dano!")
+            t_hp = f"{data['target_health']}/{data['target_max_health']}"
+            print(f"   --> {data['target']} agora tem {t_hp} HP.")
 
         elif event_type == "PLAYER_HEALED":
-            print(f"🧪 {data['player_name']} usou uma poção e recuperou {data['healed_amount']} HP!")
-            print(f"   --> HP Atual: {data['current_health']}/{data['max_health']} | Poções restantes: {data['potions_remaining']}")
+            print(f"🧪 {data['player_name']} usou poção e recuperou {data['healed_amount']} HP!")
+            curr_hp = f"{data['current_health']}/{data['max_health']}"
+            print(f"   --> HP: {curr_hp} | Poções: {data['potions_remaining']}")
 
         elif event_type == "ACTION_FAILED":
             print(f"⚠️  {data['reason']}")

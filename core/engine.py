@@ -109,9 +109,9 @@ class GameEngine:
             return False
 
         if not self.player.can_use_special():
-            self.notify("ACTION_FAILED", {
-                "reason": f"Golpe Devastador em cooldown ({self.player.special_attack_cooldown} turnos restante)!"
-            })
+            cd = self.player.special_attack_cooldown
+            msg = f"Golpe Devastador em cooldown ({cd} turnos)!"
+            self.notify("ACTION_FAILED", {"reason": msg})
             return False
 
         damage = self.player.use_special_attack()

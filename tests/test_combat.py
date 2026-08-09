@@ -5,8 +5,7 @@ não quebrem as regras do jogo.
 """
 
 import unittest
-from core.entities import Character, Player, Enemy
-from core.items import Weapon
+from core.entities import Player, Enemy
 from core.engine import GameEngine, GameObserver
 
 

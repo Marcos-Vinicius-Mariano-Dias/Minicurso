@@ -3,8 +3,6 @@
 Demonstra composição de objetos dentro do sistema de combate (ex: armas e poções).
 """
 
-from typing import Optional
-
 
 class Weapon:
     """Representa uma arma equipável por um personagem."""

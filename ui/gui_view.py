@@ -484,14 +484,17 @@ class GUIView:
         self.enemy_hp_lbl.config(text=f"Vida: {e.health} / {e.max_health} HP")
         self.enemy_progress["value"] = (e.health / e.max_health) * 100
 
-        self.potions_lbl.config(text=f"Poções: {p.potions_count} | Especial CD: {p.special_attack_cooldown}")
+        potions_text = f"Poções: {p.potions_count} | Especial CD: {p.special_attack_cooldown}"
+        self.potions_lbl.config(text=potions_text)
 
-        turn_str = "Sua Vez de Jogar!" if self.engine.current_turn == "player" else "Turno do Inimigo..."
+        is_p_turn = self.engine.current_turn == "player"
+        turn_str = "Sua Vez de Jogar!" if is_p_turn else "Turno do Inimigo..."
         self.turn_indicator_lbl.config(text=f"Turno: {turn_str}")
 
         # Atualizar Estado dos Botões
         if p.special_attack_cooldown > 0:
-            self.btn_special.config(state=tk.DISABLED, text=f"ESPECIAL ({p.special_attack_cooldown})")
+            sp_text = f"ESPECIAL ({p.special_attack_cooldown})"
+            self.btn_special.config(state=tk.DISABLED, text=sp_text)
         else:
             self.btn_special.config(state=tk.NORMAL, text="[ S ] ESPECIAL")
 
@@ -518,7 +521,9 @@ class GUIView:
         end_frame.place(relx=0.5, rely=0.5, anchor="center")
 
         result_title = "🏆 VITÓRIA GLORIOSA!" if is_player_winner else "💀 DERROTA NA ARENA..."
-        title_color = settings.HEALTH_BAR_COLOR if is_player_winner else settings.ENEMY_HEALTH_BAR_COLOR
+        title_color = settings.HEALTH_BAR_COLOR if is_player_winner else (
+            settings.ENEMY_HEALTH_BAR_COLOR
+        )
 
         lbl_title = tk.Label(
             end_frame,
@@ -617,7 +622,8 @@ class GUIView:
                 f"-{data['damage']}{crit_str}", settings.ENEMY_HEALTH_BAR_COLOR
             )
             self._update_ui_state()
-            self._append_log(f">> Você atacou {data['target']} causando {data['damage']} de dano{crit_str}!")
+            msg = f">> Você atacou {data['target']} causando {data['damage']} de dano{crit_str}!"
+            self._append_log(msg)
 
         elif event_type == "PLAYER_SPECIAL_ATTACKED":
             self._animate_attack("player")
@@ -626,7 +632,8 @@ class GUIView:
                 f"-{data['damage']} GOLPE DEVASTADOR! 🔥", "#f9e2af"
             )
             self._update_ui_state()
-            self._append_log(f">> GOLPE DEVASTADOR! Você causou {data['damage']} de dano em {data['target']}!")
+            msg = f">> GOLPE DEVASTADOR! Você causou {data['damage']} de dano em {data['target']}!"
+            self._append_log(msg)
 
         elif event_type == "PLAYER_DEFENDED":
             self._animate_floating_text(
@@ -634,7 +641,8 @@ class GUIView:
                 "DEFESA ATIVA 🛡️", settings.ACCENT_COLOR
             )
             self._update_ui_state()
-            self._append_log(f">> Você assumiu uma postura de defesa (-50% dano no próximo ataque)!")
+            msg = ">> Você assumiu uma postura de defesa (-50% dano no próximo ataque)!"
+            self._append_log(msg)
 
         elif event_type == "ENEMY_ATTACKED":
             self._animate_attack("enemy")
@@ -643,8 +651,9 @@ class GUIView:
                 getattr(self, "hero_x", 200), getattr(self, "hero_y", 200),
                 f"-{data['damage']}{def_str}", settings.ENEMY_HEALTH_BAR_COLOR
             )
+            msg = f">> {data['attacker']} atacou causando {data['damage']} de dano{def_str}!"
+            self._append_log(msg)
             self._update_ui_state()
-            self._append_log(f">> {data['attacker']} atacou causando {data['damage']} de dano{def_str}!")
 
         elif event_type == "PLAYER_HEALED":
             self._animate_floating_text(

@@ -390,11 +390,11 @@
         <!-- PALCO DA ARENA -->
         <section class="arena-stage" id="arena-stage">
             <div class="sprite-box" id="hero-box">
-                <img src="/assets/hero.png" alt="Guerreiro" class="sprite-img">
+                <img src="assets/hero.png" alt="Guerreiro" class="sprite-img">
             </div>
 
             <div class="sprite-box" id="enemy-box">
-                <img src="/assets/enemy_web.png" alt="Goblin" class="sprite-img">
+                <img src="assets/enemy_web.png" alt="Goblin" class="sprite-img">
             </div>
 
             <div class="ground"></div>
@@ -630,7 +630,9 @@
             switchTurn() {
                 this.stats.turns++;
                 if (this.turn === "player") {
-                    if (this.player.specialCooldown > 0) self.specialCooldown = Math.max(0, this.player.specialCooldown - 1);
+                    if (this.player.specialCooldown > 0) {
+                        this.player.specialCooldown = Math.max(0, this.player.specialCooldown - 1);
+                    }
                     this.turn = "enemy";
                     this.updateUI();
                     this.enemyTurn();

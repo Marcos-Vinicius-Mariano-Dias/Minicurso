@@ -3,8 +3,6 @@ name: Deploy Automatizado no Vercel (CD)
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   deploy:
@@ -14,30 +12,11 @@ jobs:
       - name: Checar código do repositório
         uses: actions/checkout@v4
 
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Instalar Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Baixar Informações do Ambiente Vercel
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Compilar Projeto para Vercel
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Publicar Deploy no Vercel (Produção)
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Publicar Deploy Estático no Vercel (Produção)
+        run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
