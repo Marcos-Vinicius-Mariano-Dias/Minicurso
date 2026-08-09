@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG de Arena em Turnos - Minicurso Git</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #181825;
+            --panel-bg: #1e1e2e;
+            --arena-bg: #11111b;
+            --text-color: #cdd6f4;
+            --accent-color: #89b4fa;
+            --health-color: #a6e3a1;
+            --enemy-health-color: #f38ba8;
+            --button-bg: #313244;
+            --button-hover: #45475a;
+            --gold-color: #f9e2af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--panel-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #313244;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-vercel {
+            background-color: #000;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid #333;
+            font-weight: 600;
+        }
+
+        /* CONTAINER PRINCIPAL */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            gap: 1.5rem;
+        }
+
+        /* CARDS DE VIDA (HP) */
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .fighter-card {
+            background-color: var(--panel-bg);
+            border: 1px solid #313244;
+            border-radius: 12px;
+            padding: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .fighter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .fighter-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .hp-text {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .hp-bar-outer {
+            width: 100%;
+            height: 18px;
+            background-color: #313244;
+            border-radius: 9px;
+            overflow: hidden;
+            margin-bottom: 0.8rem;
+        }
+
+        .hp-bar-inner {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .player-hp { background-color: var(--health-color); }
+        .enemy-hp { background-color: var(--enemy-health-color); }
+
+        .sub-status {
+            font-size: 0.85rem;
+            color: #a6adc8;
+        }
+
+        /* PALCO DA ARENA */
+        .arena-stage {
+            background-color: var(--arena-bg);
+            border: 2px solid #313244;
+            border-radius: 16px;
+            height: 340px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 2rem 5rem;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+        }
+
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background-color: #1e1e2e;
+            border-top: 2px solid var(--accent-color);
+        }
+
+        .sprite-box {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.15s ease;
+        }
+
+        .sprite-img {
+            height: 220px;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+        }
+
+        /* ANIMAÇÃO DE ATAQUE */
+        .attack-right { transform: translateX(60px); }
+        .attack-left { transform: translateX(-60px); }
+
+        /* TEXTO DE DANO FLUTUANTE */
+        .floating-damage {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.6rem;
+            font-weight: 800;
+            pointer-events: none;
+            z-index: 10;
+            animation: floatUp 0.9s forwards ease-out;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
+        }
+
+        /* PAINEL INFERIOR */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .log-card {
+            background-color: var(--panel-bg);
+            border: 1px solid #313244;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #a6adc8;
+            margin-bottom: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .log-box {
+            background-color: var(--arena-bg);
+            border-radius: 8px;
+            padding: 0.8rem;
+            height: 130px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .log-entry { color: var(--text-color); }
+        .log-critical { color: var(--gold-color); font-weight: bold; }
+        .log-heal { color: var(--health-color); }
+        .log-enemy { color: var(--enemy-health-color); }
+
+        /* BOTÕES DE AÇÃO */
+        .controls-card {
+            background-color: var(--panel-bg);
+            border: 1px solid #313244;
+            border-radius: 12px;
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .btn-action {
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: 1px solid #45475a;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0.8rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .btn-action:hover:not(:disabled) {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+        }
+
+        .btn-action:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-special { color: var(--gold-color); }
+        .btn-heal { color: var(--health-color); }
+
+        /* MODAL DE RESULTADO */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .modal-stats {
+            background-color: var(--arena-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.2rem 0;
+            text-align: left;
+            font-size: 0.95rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-modal {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            background-color: var(--accent-color);
+            color: #11111b;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-modal:hover { background-color: #b4befe; }
+
+        @media (max-width: 768px) {
+            .status-grid, .bottom-grid { grid-template-columns: 1fr; }
+            .arena-stage { padding: 1rem; height: 260px; }
+            .sprite-img { height: 160px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            ⚔️ RPG ARENA - COMBATE EM TURNOS
+        </div>
+        <div class="badge-vercel">
+            Vercel Deployment Live
+        </div>
+    </header>
+
+    <main>
+        <!-- STATUS GRID -->
+        <section class="status-grid">
+            <div class="fighter-card">
+                <div class="fighter-header">
+                    <span class="fighter-name">🛡️ HERÓI: Guerreiro</span>
+                    <span class="hp-text" id="player-hp-text">100 / 100 HP</span>
+                </div>
+                <div class="hp-bar-outer">
+                    <div class="hp-bar-inner player-hp" id="player-hp-bar" style="width: 100%;"></div>
+                </div>
+                <div class="sub-status" id="player-sub">Poções: 3 | Especial: Pronto!</div>
+            </div>
+
+            <div class="fighter-card">
+                <div class="fighter-header">
+                    <span class="fighter-name">👺 OPONENTE: Goblin Voraz</span>
+                    <span class="hp-text" id="enemy-hp-text">80 / 80 HP</span>
+                </div>
+                <div class="hp-bar-outer">
+                    <div class="hp-bar-inner enemy-hp" id="enemy-hp-bar" style="width: 100%;"></div>
+                </div>
+                <div class="sub-status" id="enemy-sub">Turno: Sua vez de jogar!</div>
+            </div>
+        </section>
+
+        <!-- PALCO DA ARENA -->
+        <section class="arena-stage" id="arena-stage">
+            <div class="sprite-box" id="hero-box">
+                <img src="/assets/hero.png" alt="Guerreiro" class="sprite-img">
+            </div>
+
+            <div class="sprite-box" id="enemy-box">
+                <img src="/assets/enemy_web.png" alt="Goblin" class="sprite-img">
+            </div>
+
+            <div class="ground"></div>
+        </section>
+
+        <!-- PAINEL INFERIOR -->
+        <section class="bottom-grid">
+            <div class="log-card">
+                <div class="card-title">Histórico de Combate</div>
+                <div class="log-box" id="log-box">
+                    <div class="log-entry">>> O combate começou na arena Vercel! Escolha sua primeira ação.</div>
+                </div>
+            </div>
+
+            <div class="controls-card">
+                <button class="btn-action" id="btn-attack" onclick="game.playerAttack()">
+                    <span>🗡️ ATACAR</span>
+                    <small>[Tecla A]</small>
+                </button>
+
+                <button class="btn-action btn-special" id="btn-special" onclick="game.playerSpecial()">
+                    <span>🔥 ESPECIAL</span>
+                    <small>[Tecla S]</small>
+                </button>
+
+                <button class="btn-action" id="btn-defend" onclick="game.playerDefend()">
+                    <span>🛡️ DEFENDER</span>
+                    <small>[Tecla D]</small>
+                </button>
+
+                <button class="btn-action btn-heal" id="btn-heal" onclick="game.playerHeal()">
+                    <span>🧪 POÇÃO</span>
+                    <small>[Tecla P]</small>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL DE FIM DE JOGO -->
+    <div class="modal-overlay" id="modal-end">
+        <div class="modal-content">
+            <div class="modal-title" id="modal-title">🏆 VITÓRIA!</div>
+            <div class="modal-stats" id="modal-stats">
+                <div>Vencedor: Guerreiro</div>
+                <div>Total de Turnos: 5</div>
+                <div>Dano Causado: 85 DP</div>
+                <div>Poções Usadas: 1</div>
+            </div>
+            <button class="btn-modal" onclick="game.restart()">🔄 JOGAR NOVAMENTE</button>
+        </div>
+    </div>
+
+    <script>
+        // MOTOR DE JOGO WEB (REPLICANDO O CORE PYTHON 100%)
+        class WebGameEngine {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.player = {
+                    name: "Guerreiro",
+                    maxHp: 100,
+                    hp: 100,
+                    damage: 15,
+                    potions: 3,
+                    specialCooldown: 0,
+                    isDefending: false
+                };
+
+                this.enemy = {
+                    name: "Goblin Voraz",
+                    maxHp: 80,
+                    hp: 80,
+                    damage: 12
+                };
+
+                this.turn = "player";
+                this.isGameOver = false;
+                this.stats = { turns: 0, damageDealt: 0, potionsUsed: 0 };
+
+                this.updateUI();
+                this.log(">> Partida reiniciada na arena Vercel!");
+            }
+
+            log(msg, type = "normal") {
+                const box = document.getElementById("log-box");
+                const div = document.createElement("div");
+                div.className = `log-entry log-${type}`;
+                div.textContent = msg;
+                box.appendChild(div);
+                box.scrollTop = box.scrollHeight;
+            }
+
+            spawnFloatingText(targetBoxId, text, color) {
+                const target = document.getElementById(targetBoxId);
+                const rect = target.getBoundingClientRect();
+                const stageRect = document.getElementById("arena-stage").getBoundingClientRect();
+
+                const el = document.createElement("div");
+                el.className = "floating-damage";
+                el.style.color = color;
+                el.style.left = `${rect.left - stageRect.left + 50}px`;
+                el.style.top = `${rect.top - stageRect.top}px`;
+                el.textContent = text;
+
+                document.getElementById("arena-stage").appendChild(el);
+                setTimeout(() => el.remove(), 900);
+            }
+
+            animateAttack(boxId, isLeft) {
+                const box = document.getElementById(boxId);
+                box.classList.add(isLeft ? "attack-right" : "attack-left");
+                setTimeout(() => box.classList.remove("attack-right", "attack-left"), 200);
+            }
+
+            updateUI() {
+                // Player HP
+                const playerPct = Math.max(0, (this.player.hp / this.player.maxHp) * 100);
+                document.getElementById("player-hp-bar").style.width = `${playerPct}%`;
+                document.getElementById("player-hp-text").textContent = `${this.player.hp} / ${this.player.maxHp} HP`;
+                
+                const cdStr = this.player.specialCooldown > 0 ? `CD: ${this.player.specialCooldown} turnos` : "Pronto!";
+                document.getElementById("player-sub").textContent = `Poções: ${this.player.potions} | Especial: ${cdStr}`;
+
+                // Enemy HP
+                const enemyPct = Math.max(0, (this.enemy.hp / this.enemy.maxHp) * 100);
+                document.getElementById("enemy-hp-bar").style.width = `${enemyPct}%`;
+                document.getElementById("enemy-hp-text").textContent = `${this.enemy.hp} / ${this.enemy.maxHp} HP`;
+                document.getElementById("enemy-sub").textContent = `Turno: ${this.turn === "player" ? "Sua vez de jogar!" : "Turno do Inimigo..."}`;
+
+                // Buttons
+                const btnSpecial = document.getElementById("btn-special");
+                btnSpecial.disabled = this.player.specialCooldown > 0 || this.isGameOver;
+            }
+
+            playerAttack() {
+                if (this.isGameOver || this.turn !== "player") return;
+
+                this.animateAttack("hero-box", true);
+
+                const isCrit = Math.random() < 0.20;
+                let damage = this.player.damage + 8;
+                if (isCrit) damage = Math.floor(damage * 1.75);
+
+                this.enemy.hp = Math.max(0, this.enemy.hp - damage);
+                this.stats.damageDealt += damage;
+
+                const critTag = isCrit ? " (CRÍTICO! 💥)" : "";
+                this.spawnFloatingText("enemy-box", `-${damage}${critTag}`, isCrit ? "#f9e2af" : "#f38ba8");
+                this.log(`>> Você atacou ${this.enemy.name} causando ${damage} de dano${critTag}!`, isCrit ? "critical" : "normal");
+
+                if (this.enemy.hp <= 0) {
+                    this.endGame(true);
+                    return;
+                }
+
+                this.switchTurn();
+            }
+
+            playerSpecial() {
+                if (this.isGameOver || this.turn !== "player" || this.player.specialCooldown > 0) return;
+
+                this.animateAttack("hero-box", true);
+                const damage = 35;
+                this.enemy.hp = Math.max(0, this.enemy.hp - damage);
+                this.player.specialCooldown = 4;
+                this.stats.damageDealt += damage;
+
+                this.spawnFloatingText("enemy-box", `-${damage} GOLPE DEVASTADOR! 🔥`, "#f9e2af");
+                this.log(`>> GOLPE DEVASTADOR! Você causou ${damage} de dano em ${this.enemy.name}!`, "critical");
+
+                if (this.enemy.hp <= 0) {
+                    this.endGame(true);
+                    return;
+                }
+
+                this.switchTurn();
+            }
+
+            playerDefend() {
+                if (this.isGameOver || this.turn !== "player") return;
+
+                this.player.isDefending = true;
+                this.spawnFloatingText("hero-box", "DEFESA ATIVA 🛡️", "#89b4fa");
+                this.log(">> Você assumiu a postura de defesa (-50% dano no próximo ataque)!");
+
+                this.switchTurn();
+            }
+
+            playerHeal() {
+                if (this.isGameOver || this.turn !== "player" || this.player.potions <= 0) return;
+
+                this.player.potions--;
+                const healAmt = Math.min(this.player.maxHp - this.player.hp, 30);
+                this.player.hp += healAmt;
+                this.stats.potionsUsed++;
+
+                this.spawnFloatingText("hero-box", `+${healAmt} HP 🧪`, "#a6e3a1");
+                this.log(`>> CURA! Você consumiu uma poção e recuperou +${healAmt} HP!`, "heal");
+
+                this.switchTurn();
+            }
+
+            enemyTurn() {
+                if (this.isGameOver || this.turn !== "enemy") return;
+
+                setTimeout(() => {
+                    this.animateAttack("enemy-box", false);
+
+                    let damage = this.enemy.damage;
+                    let defTag = "";
+
+                    if (this.player.isDefending) {
+                        damage = Math.floor(damage * 0.50);
+                        defTag = " (DEFENDIDO! 🛡️)";
+                        this.player.isDefending = false;
+                    }
+
+                    this.player.hp = Math.max(0, this.player.hp - damage);
+                    this.spawnFloatingText("hero-box", `-${damage}${defTag}`, "#f38ba8");
+                    this.log(`>> ${this.enemy.name} contra-atacou causando ${damage} de dano${defTag}!`, "enemy");
+
+                    if (this.player.hp <= 0) {
+                        this.endGame(false);
+                        return;
+                    }
+
+                    this.switchTurn();
+                }, 700);
+            }
+
+            switchTurn() {
+                this.stats.turns++;
+                if (this.turn === "player") {
+                    if (this.player.specialCooldown > 0) self.specialCooldown = Math.max(0, this.player.specialCooldown - 1);
+                    this.turn = "enemy";
+                    this.updateUI();
+                    this.enemyTurn();
+                } else {
+                    this.turn = "player";
+                    this.updateUI();
+                }
+            }
+
+            endGame(isPlayerWinner) {
+                this.isGameOver = true;
+                this.updateUI();
+
+                const modal = document.getElementById("modal-end");
+                const title = document.getElementById("modal-title");
+                const stats = document.getElementById("modal-stats");
+
+                title.textContent = isPlayerWinner ? "🏆 VITÓRIA GLORIOSA!" : "💀 DERROTA NA ARENA...";
+                title.style.color = isPlayerWinner ? "var(--health-color)" : "var(--enemy-health-color)";
+
+                stats.innerHTML = `
+                    <div><strong>Vencedor:</strong> ${isPlayerWinner ? this.player.name : this.enemy.name}</div>
+                    <div><strong>Total de Turnos:</strong> ${this.stats.turns}</div>
+                    <div><strong>Dano Causado:</strong> ${this.stats.damageDealt} DP</div>
+                    <div><strong>Poções Consumidas:</strong> ${this.stats.potionsUsed}</div>
+                `;
+
+                setTimeout(() => modal.classList.add("active"), 800);
+            }
+
+            restart() {
+                document.getElementById("modal-end").classList.remove("active");
+                this.reset();
+            }
+        }
+
+        const game = new WebGameEngine();
+
+        // ATALHOS DE TECLADO
+        window.addEventListener("keydown", (e) => {
+            const k = e.key.toLowerCase();
+            if (k === 'a') game.playerAttack();
+            if (k === 's') game.playerSpecial();
+            if (k === 'd') game.playerDefend();
+            if (k === 'p') game.playerHeal();
+        });
+    </script>
+</body>
+</html>
