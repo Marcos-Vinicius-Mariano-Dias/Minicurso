@@ -44,9 +44,9 @@ class TestCombatLogic(unittest.TestCase):
         self.assertTrue(self.player.is_defending)
 
         damage_taken = self.player.take_damage(40)
-        self.assertEqual(damage_taken, 20)  # 50% de 40
+        self.assertEqual(damage_taken, 20)
         self.assertEqual(self.player.health, 80)
-        self.assertFalse(self.player.is_defending)  # Reseta após o ataque
+        self.assertFalse(self.player.is_defending)
 
     def test_character_heal_cap(self) -> None:
         """Testa se a cura restaura a vida sem ultrapassar a vida máxima."""
@@ -69,11 +69,9 @@ class TestCombatLogic(unittest.TestCase):
         self.assertEqual(damage, 35)
         self.assertFalse(self.player.can_use_special())
 
-        # Tentar usar novamente durante o cooldown
         damage_cooldown = self.player.use_special_attack()
         self.assertEqual(damage_cooldown, 0)
 
-        # Simular passagem de 4 turnos
         for _ in range(4):
             self.player.update_cooldowns()
 

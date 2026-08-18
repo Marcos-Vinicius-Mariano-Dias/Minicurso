@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RPG de Arena em Turnos - Minicurso Git</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-color: #181825;
@@ -46,7 +49,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #313244;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .logo {
@@ -92,7 +95,7 @@
             border: 1px solid #313244;
             border-radius: 12px;
             padding: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .fighter-header {
@@ -126,8 +129,13 @@
             transition: width 0.3s ease;
         }
 
-        .player-hp { background-color: var(--health-color); }
-        .enemy-hp { background-color: var(--enemy-health-color); }
+        .player-hp {
+            background-color: var(--health-color);
+        }
+
+        .enemy-hp {
+            background-color: var(--enemy-health-color);
+        }
 
         .sub-status {
             font-size: 0.85rem;
@@ -146,7 +154,7 @@
             justify-content: space-between;
             align-items: flex-end;
             padding: 2rem 5rem;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
         }
 
         .ground {
@@ -171,12 +179,17 @@
         .sprite-img {
             height: 220px;
             object-fit: contain;
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5));
         }
 
         /* ANIMAÇÃO DE ATAQUE */
-        .attack-right { transform: translateX(60px); }
-        .attack-left { transform: translateX(-60px); }
+        .attack-right {
+            transform: translateX(60px);
+        }
+
+        .attack-left {
+            transform: translateX(-60px);
+        }
 
         /* TEXTO DE DANO FLUTUANTE */
         .floating-damage {
@@ -190,8 +203,15 @@
         }
 
         @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(1.2);
+            }
         }
 
         /* PAINEL INFERIOR */
@@ -232,10 +252,22 @@
             gap: 6px;
         }
 
-        .log-entry { color: var(--text-color); }
-        .log-critical { color: var(--gold-color); font-weight: bold; }
-        .log-heal { color: var(--health-color); }
-        .log-enemy { color: var(--enemy-health-color); }
+        .log-entry {
+            color: var(--text-color);
+        }
+
+        .log-critical {
+            color: var(--gold-color);
+            font-weight: bold;
+        }
+
+        .log-heal {
+            color: var(--health-color);
+        }
+
+        .log-enemy {
+            color: var(--enemy-health-color);
+        }
 
         /* BOTÕES DE AÇÃO */
         .controls-card {
@@ -277,14 +309,22 @@
             cursor: not-allowed;
         }
 
-        .btn-special { color: var(--gold-color); }
-        .btn-heal { color: var(--health-color); }
+        .btn-special {
+            color: var(--gold-color);
+        }
+
+        .btn-heal {
+            color: var(--health-color);
+        }
 
         /* MODAL DE RESULTADO */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -307,7 +347,7 @@
             max-width: 450px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
         }
 
         .modal-title {
@@ -341,15 +381,29 @@
             transition: background 0.2s ease;
         }
 
-        .btn-modal:hover { background-color: #b4befe; }
+        .btn-modal:hover {
+            background-color: #b4befe;
+        }
 
         @media (max-width: 768px) {
-            .status-grid, .bottom-grid { grid-template-columns: 1fr; }
-            .arena-stage { padding: 1rem; height: 260px; }
-            .sprite-img { height: 160px; }
+
+            .status-grid,
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .arena-stage {
+                padding: 1rem;
+                height: 260px;
+            }
+
+            .sprite-img {
+                height: 160px;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -366,7 +420,7 @@
         <section class="status-grid">
             <div class="fighter-card">
                 <div class="fighter-header">
-                    <span class="fighter-name">🛡️ HERÓI: Guerreiro</span>
+                    <span class="fighter-name">HERÓI: Guerreiro</span>
                     <span class="hp-text" id="player-hp-text">100 / 100 HP</span>
                 </div>
                 <div class="hp-bar-outer">
@@ -377,7 +431,7 @@
 
             <div class="fighter-card">
                 <div class="fighter-header">
-                    <span class="fighter-name">👺 OPONENTE: Goblin Voraz</span>
+                    <span class="fighter-name">OPONENTE: Goblin Voraz</span>
                     <span class="hp-text" id="enemy-hp-text">80 / 80 HP</span>
                 </div>
                 <div class="hp-bar-outer">
@@ -411,22 +465,22 @@
 
             <div class="controls-card">
                 <button class="btn-action" id="btn-attack" onclick="game.playerAttack()">
-                    <span>🗡️ ATACAR</span>
+                    <span>ATACAR</span>
                     <small>[Tecla A]</small>
                 </button>
 
                 <button class="btn-action btn-special" id="btn-special" onclick="game.playerSpecial()">
-                    <span>🔥 ESPECIAL</span>
+                    <span>ESPECIAL</span>
                     <small>[Tecla S]</small>
                 </button>
 
                 <button class="btn-action" id="btn-defend" onclick="game.playerDefend()">
-                    <span>🛡️ DEFENDER</span>
+                    <span>DEFENDER</span>
                     <small>[Tecla D]</small>
                 </button>
 
                 <button class="btn-action btn-heal" id="btn-heal" onclick="game.playerHeal()">
-                    <span>🧪 POÇÃO</span>
+                    <span>POÇÃO</span>
                     <small>[Tecla P]</small>
                 </button>
             </div>
@@ -436,14 +490,14 @@
     <!-- MODAL DE FIM DE JOGO -->
     <div class="modal-overlay" id="modal-end">
         <div class="modal-content">
-            <div class="modal-title" id="modal-title">🏆 VITÓRIA!</div>
+            <div class="modal-title" id="modal-title">VITÓRIA!</div>
             <div class="modal-stats" id="modal-stats">
                 <div>Vencedor: Guerreiro</div>
                 <div>Total de Turnos: 5</div>
                 <div>Dano Causado: 85 DP</div>
                 <div>Poções Usadas: 1</div>
             </div>
-            <button class="btn-modal" onclick="game.restart()">🔄 JOGAR NOVAMENTE</button>
+            <button class="btn-modal" onclick="game.restart()">JOGAR NOVAMENTE</button>
         </div>
     </div>
 
@@ -516,7 +570,7 @@
                 const playerPct = Math.max(0, (this.player.hp / this.player.maxHp) * 100);
                 document.getElementById("player-hp-bar").style.width = `${playerPct}%`;
                 document.getElementById("player-hp-text").textContent = `${this.player.hp} / ${this.player.maxHp} HP`;
-                
+
                 const cdStr = this.player.specialCooldown > 0 ? `CD: ${this.player.specialCooldown} turnos` : "Pronto!";
                 document.getElementById("player-sub").textContent = `Poções: ${this.player.potions} | Especial: ${cdStr}`;
 
@@ -543,7 +597,7 @@
                 this.enemy.hp = Math.max(0, this.enemy.hp - damage);
                 this.stats.damageDealt += damage;
 
-                const critTag = isCrit ? " (CRÍTICO! 💥)" : "";
+                const critTag = isCrit ? " (CRÍTICO!)" : "";
                 this.spawnFloatingText("enemy-box", `-${damage}${critTag}`, isCrit ? "#f9e2af" : "#f38ba8");
                 this.log(`>> Você atacou ${this.enemy.name} causando ${damage} de dano${critTag}!`, isCrit ? "critical" : "normal");
 
@@ -564,7 +618,7 @@
                 this.player.specialCooldown = 4;
                 this.stats.damageDealt += damage;
 
-                this.spawnFloatingText("enemy-box", `-${damage} GOLPE DEVASTADOR! 🔥`, "#f9e2af");
+                this.spawnFloatingText("enemy-box", `-${damage} GOLPE DEVASTADOR!`, "#f9e2af");
                 this.log(`>> GOLPE DEVASTADOR! Você causou ${damage} de dano em ${this.enemy.name}!`, "critical");
 
                 if (this.enemy.hp <= 0) {
@@ -579,7 +633,7 @@
                 if (this.isGameOver || this.turn !== "player") return;
 
                 this.player.isDefending = true;
-                this.spawnFloatingText("hero-box", "DEFESA ATIVA 🛡️", "#89b4fa");
+                this.spawnFloatingText("hero-box", "DEFESA ATIVA", "#89b4fa");
                 this.log(">> Você assumiu a postura de defesa (-50% dano no próximo ataque)!");
 
                 this.switchTurn();
@@ -593,7 +647,7 @@
                 this.player.hp += healAmt;
                 this.stats.potionsUsed++;
 
-                this.spawnFloatingText("hero-box", `+${healAmt} HP 🧪`, "#a6e3a1");
+                this.spawnFloatingText("hero-box", `+${healAmt} HP`, "#a6e3a1");
                 this.log(`>> CURA! Você consumiu uma poção e recuperou +${healAmt} HP!`, "heal");
 
                 this.switchTurn();
@@ -610,7 +664,7 @@
 
                     if (this.player.isDefending) {
                         damage = Math.floor(damage * 0.50);
-                        defTag = " (DEFENDIDO! 🛡️)";
+                        defTag = " (DEFENDIDO!)";
                         this.player.isDefending = false;
                     }
 
@@ -650,7 +704,7 @@
                 const title = document.getElementById("modal-title");
                 const stats = document.getElementById("modal-stats");
 
-                title.textContent = isPlayerWinner ? "🏆 VITÓRIA GLORIOSA!" : "💀 DERROTA NA ARENA...";
+                title.textContent = isPlayerWinner ? "VITÓRIA GLORIOSA!" : "DERROTA NA ARENA...";
                 title.style.color = isPlayerWinner ? "var(--health-color)" : "var(--enemy-health-color)";
 
                 stats.innerHTML = `
@@ -681,4 +735,5 @@
         });
     </script>
 </body>
+
 </html>

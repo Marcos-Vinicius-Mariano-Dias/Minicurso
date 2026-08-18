@@ -25,11 +25,9 @@ class GUIView:
         self.root.title(settings.WINDOW_TITLE)
         self.root.configure(bg=settings.BG_COLOR)
 
-        # Configuração de Tela Cheia por Padrão
         self.is_fullscreen: bool = True
         self.root.attributes("-fullscreen", True)
 
-        # Teclas de Atalho (Esc para alternar Tela Cheia, A, S, D, P para atalhos de combate)
         self.root.bind("<Escape>", self._toggle_fullscreen)
         self.root.bind("<F11>", self._toggle_fullscreen)
         self.root.bind("<a>", lambda e: self._on_attack_clicked())
@@ -37,19 +35,16 @@ class GUIView:
         self.root.bind("<d>", lambda e: self._on_defend_clicked())
         self.root.bind("<p>", lambda e: self._on_heal_clicked())
 
-        # Imagens dos Sprites
         self.hero_img: Optional[tk.PhotoImage] = None
         self.enemy_img: Optional[tk.PhotoImage] = None
 
         self._load_sprites()
 
-        # Frame Principal Container para troca de telas
         self.container = tk.Frame(self.root, bg=settings.BG_COLOR)
         self.container.pack(fill=tk.BOTH, expand=True)
 
         self.engine.subscribe(self)
 
-        # Iniciar na Tela de Início (Start Screen)
         self.show_start_screen()
 
     def _toggle_fullscreen(self, event: Optional[tk.Event] = None) -> None:
@@ -74,9 +69,6 @@ class GUIView:
         for widget in self.container.winfo_children():
             widget.destroy()
 
-    # =========================================================================
-    # 1. TELA DE INÍCIO (START SCREEN / MENU PRINCIPAL)
-    # =========================================================================
     def show_start_screen(self) -> None:
         """Exibe o menu inicial do jogo."""
         self._clear_container()
@@ -86,7 +78,7 @@ class GUIView:
 
         title_lbl = tk.Label(
             menu_frame,
-            text="⚔️ RPG ARENA IN TURNOS ⚔️",
+            text=" RPG ARENA IN TURNOS ",
             font=("Helvetica", 28, "bold"),
             bg=settings.BG_COLOR,
             fg=settings.ACCENT_COLOR,
@@ -104,10 +96,9 @@ class GUIView:
         )
         subtitle_lbl.pack()
 
-        # Botões do Menu Principal
         btn_start = tk.Button(
             menu_frame,
-            text="🎮 INICIAR BATALHA",
+            text=" INICIAR BATALHA",
             font=("Helvetica", 14, "bold"),
             bg=settings.BUTTON_BG,
             fg=settings.BUTTON_FG,
@@ -121,7 +112,7 @@ class GUIView:
 
         btn_story = tk.Button(
             menu_frame,
-            text="📖 MODO HISTÓRIA (TASK-06)",
+            text=" MODO HISTÓRIA (TASK-06)",
             font=("Helvetica", 14, "bold"),
             bg=settings.BUTTON_BG,
             fg=settings.ACCENT_COLOR,
@@ -135,7 +126,7 @@ class GUIView:
 
         btn_instructions = tk.Button(
             menu_frame,
-            text="ℹ️ INSTRUÇÕES DO MINICURSO",
+            text="ℹ INSTRUÇÕES DO MINICURSO",
             font=("Helvetica", 12),
             bg=settings.PANEL_BG,
             fg=settings.TEXT_COLOR,
@@ -148,7 +139,7 @@ class GUIView:
 
         btn_exit = tk.Button(
             menu_frame,
-            text="🚪 SAIR DO JOGO",
+            text=" SAIR DO JOGO",
             font=("Helvetica", 12),
             bg=settings.PANEL_BG,
             fg=settings.ENEMY_HEALTH_BAR_COLOR,
@@ -163,7 +154,7 @@ class GUIView:
         """Exibe popup explicativo sobre a Task do Modo História."""
         messagebox.showinfo(
             "Modo História / Campanha (Task-06)",
-            "📖 MODO HISTÓRIA (Task em desenvolvimento para os alunos):\n\n"
+            "MODO HISTÓRIA (Task em desenvolvimento para os alunos):\n\n"
             "Capítulo 1: O Resgate do Vilarejo\n"
             "Capítulo 2: As Ruínas do Dragão de Pedra\n\n"
             "Esta funcionalidade será desenvolvida durante a atividade prática de Git!"
@@ -173,7 +164,7 @@ class GUIView:
         """Exibe modal com instruções de atalhos e objetivos."""
         messagebox.showinfo(
             "Instruções do Jogo",
-            "🎮 COMANDOS DE BATALHA:\n"
+            "COMANDOS DE BATALHA:\n"
             " - [ A ]: Atacar (Dano normal com chance de Crítico)\n"
             " - [ S ]: Golpe Devastador (Ataque especial com 3 turnos de cooldown)\n"
             " - [ D ]: Defender (Reduz o próximo dano recebido em 50%)\n"
@@ -181,9 +172,6 @@ class GUIView:
             " - [ Esc ]: Alternar Tela Cheia / Janela"
         )
 
-    # =========================================================================
-    # 2. TELA DE COMBATE (ARENA SCREEN)
-    # =========================================================================
     def start_battle(self) -> None:
         """Inicia a batalha na arena."""
         self._clear_container()
@@ -196,7 +184,6 @@ class GUIView:
         main_layout = tk.Frame(self.container, bg=settings.BG_COLOR, padx=20, pady=15)
         main_layout.pack(fill=tk.BOTH, expand=True)
 
-        # Cabeçalho da Batalha
         header_frame = tk.Frame(main_layout, bg=settings.BG_COLOR)
         header_frame.pack(fill=tk.X, pady=(0, 10))
 
@@ -211,7 +198,7 @@ class GUIView:
 
         btn_menu = tk.Button(
             header_frame,
-            text="🏠 Menu Principal",
+            text=" Menu Principal",
             font=("Helvetica", 10),
             bg=settings.PANEL_BG,
             fg=settings.TEXT_COLOR,
@@ -219,11 +206,9 @@ class GUIView:
         )
         btn_menu.pack(side=tk.RIGHT)
 
-        # Painel Superior - Barras de Vida (HP)
         status_frame = tk.Frame(main_layout, bg=settings.BG_COLOR)
         status_frame.pack(fill=tk.X, pady=(0, 10))
 
-        # Card do Jogador
         player_box = tk.LabelFrame(
             status_frame,
             text=f" HERÓI: {self.engine.player.name} ",
@@ -258,7 +243,6 @@ class GUIView:
         )
         self.potions_lbl.pack(anchor="w")
 
-        # Card do Inimigo
         enemy_box = tk.LabelFrame(
             status_frame,
             text=f" OPONENTE: {self.engine.enemy.name} ",
@@ -293,7 +277,6 @@ class GUIView:
         )
         self.turn_indicator_lbl.pack(anchor="w")
 
-        # Palco Central (Canvas com Sprites e Dano Flutuante)
         self.arena_canvas = tk.Canvas(
             main_layout,
             bg=settings.ARENA_BG,
@@ -303,7 +286,6 @@ class GUIView:
         self.arena_canvas.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
         self.arena_canvas.bind("<Configure>", self._draw_arena)
 
-        # Painel Inferior - Log de Combate e Botões de Ação
         bottom_frame = tk.Frame(main_layout, bg=settings.BG_COLOR)
         bottom_frame.pack(fill=tk.X, side=tk.BOTTOM)
 
@@ -340,7 +322,6 @@ class GUIView:
         )
         controls_box.pack(side=tk.RIGHT, fill=tk.BOTH, padx=(5, 0))
 
-        # Botões de Ação em Grid 2x2
         btn_grid = tk.Frame(controls_box, bg=settings.PANEL_BG)
         btn_grid.pack()
 
@@ -420,13 +401,11 @@ class GUIView:
         self.enemy_x = int(w * 0.75)
         self.enemy_y = ground_y - 125
 
-        # Renderiza Herói
         if self.hero_img:
             self.hero_sprite_id = self.arena_canvas.create_image(
                 self.hero_x, self.hero_y, image=self.hero_img, anchor="center"
             )
 
-        # Renderiza Goblin (Frente para o Guerreiro)
         if self.enemy_img:
             self.enemy_sprite_id = self.arena_canvas.create_image(
                 self.enemy_x, self.enemy_y, image=self.enemy_img, anchor="center"
@@ -491,7 +470,6 @@ class GUIView:
         turn_str = "Sua Vez de Jogar!" if is_p_turn else "Turno do Inimigo..."
         self.turn_indicator_lbl.config(text=f"Turno: {turn_str}")
 
-        # Atualizar Estado dos Botões
         if p.special_attack_cooldown > 0:
             sp_text = f"ESPECIAL ({p.special_attack_cooldown})"
             self.btn_special.config(state=tk.DISABLED, text=sp_text)
@@ -510,9 +488,6 @@ class GUIView:
     def _on_heal_clicked(self) -> None:
         self.engine.player_heal()
 
-    # =========================================================================
-    # 3. TELA DE FIM DE JOGO (VICTORY / DEFEAT SCREEN)
-    # =========================================================================
     def show_end_screen(self, winner: str, is_player_winner: bool, data: Dict[str, Any]) -> None:
         """Exibe a tela de resultado final com relatório da partida."""
         self._clear_container()
@@ -580,7 +555,7 @@ class GUIView:
 
         btn_restart = tk.Button(
             end_frame,
-            text="🔄 JOGAR NOVAMENTE",
+            text=" JOGAR NOVAMENTE",
             font=("Helvetica", 13, "bold"),
             bg=settings.BUTTON_BG,
             fg=settings.BUTTON_FG,
@@ -594,7 +569,7 @@ class GUIView:
 
         btn_main_menu = tk.Button(
             end_frame,
-            text="🏠 VOLTAR AO MENU PRINCIPAL",
+            text=" VOLTAR AO MENU PRINCIPAL",
             font=("Helvetica", 12),
             bg=settings.PANEL_BG,
             fg=settings.TEXT_COLOR,
@@ -605,9 +580,6 @@ class GUIView:
         )
         btn_main_menu.pack(pady=5, fill=tk.X)
 
-    # =========================================================================
-    # RECEPÇÃO DE EVENTOS DO GAME ENGINE (OBSERVER PATTERN)
-    # =========================================================================
     def on_event(self, event_type: str, data: Dict[str, Any]) -> None:
         """Reage a eventos emitidos pelo GameEngine."""
         if event_type == "GAME_STARTED":
@@ -616,7 +588,7 @@ class GUIView:
 
         elif event_type == "PLAYER_ATTACKED":
             self._animate_attack("player")
-            crit_str = " (CRÍTICO! 💥)" if data.get("is_critical") else ""
+            crit_str = " (CRÍTICO!)" if data.get("is_critical") else ""
             self._animate_floating_text(
                 getattr(self, "enemy_x", 400), getattr(self, "enemy_y", 200),
                 f"-{data['damage']}{crit_str}", settings.ENEMY_HEALTH_BAR_COLOR
@@ -629,7 +601,7 @@ class GUIView:
             self._animate_attack("player")
             self._animate_floating_text(
                 getattr(self, "enemy_x", 400), getattr(self, "enemy_y", 200),
-                f"-{data['damage']} GOLPE DEVASTADOR! 🔥", "#f9e2af"
+                f"-{data['damage']} GOLPE DEVASTADOR!", "#f9e2af"
             )
             self._update_ui_state()
             msg = f">> GOLPE DEVASTADOR! Você causou {data['damage']} de dano em {data['target']}!"
@@ -638,7 +610,7 @@ class GUIView:
         elif event_type == "PLAYER_DEFENDED":
             self._animate_floating_text(
                 getattr(self, "hero_x", 200), getattr(self, "hero_y", 200),
-                "DEFESA ATIVA 🛡️", settings.ACCENT_COLOR
+                "DEFESA ATIVA ", settings.ACCENT_COLOR
             )
             self._update_ui_state()
             msg = ">> Você assumiu uma postura de defesa (-50% dano no próximo ataque)!"
@@ -646,7 +618,7 @@ class GUIView:
 
         elif event_type == "ENEMY_ATTACKED":
             self._animate_attack("enemy")
-            def_str = " (DEFENDIDO! 🛡️)" if data.get("is_defending") else ""
+            def_str = " (DEFENDIDO! )" if data.get("is_defending") else ""
             self._animate_floating_text(
                 getattr(self, "hero_x", 200), getattr(self, "hero_y", 200),
                 f"-{data['damage']}{def_str}", settings.ENEMY_HEALTH_BAR_COLOR
@@ -658,7 +630,7 @@ class GUIView:
         elif event_type == "PLAYER_HEALED":
             self._animate_floating_text(
                 getattr(self, "hero_x", 200), getattr(self, "hero_y", 200),
-                f"+{data['healed_amount']} HP 🧪", settings.HEALTH_BAR_COLOR
+                f"+{data['healed_amount']} HP ", settings.HEALTH_BAR_COLOR
             )
             self._update_ui_state()
             self._append_log(f">> CURA! Você recuperou +{data['healed_amount']} HP.")

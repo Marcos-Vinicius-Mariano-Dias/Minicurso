@@ -24,7 +24,7 @@ class CLIView:
         """Trata eventos enviados pelo GameEngine e imprime no terminal."""
         if event_type == "GAME_STARTED":
             print("\n==========================================")
-            print("      ⚔️  BEM-VINDO À ARENA DE RPG! ⚔️")
+            print("          BEM-VINDO À ARENA DE RPG! ")
             print("==========================================")
             p_hp = f"{data['player_health']}/{data['player_max_health']}"
             e_hp = f"{data['enemy_health']}/{data['enemy_max_health']}"
@@ -47,14 +47,14 @@ class CLIView:
             print(f"   --> HP: {curr_hp} | Poções: {data['potions_remaining']}")
 
         elif event_type == "ACTION_FAILED":
-            print(f"⚠️  {data['reason']}")
+            print(f"  {data['reason']}")
 
         elif event_type == "GAME_OVER":
             print("\n==========================================")
             if data["is_player_winner"]:
-                print(f"🏆 VITÓRIA! {data['winner']} derrotou o oponente e venceu a partida!")
+                print(f"VITÓRIA! {data['winner']} derrotou o oponente e venceu a partida!")
             else:
-                print(f"💀 DERROTA! {data['winner']} venceu o combate...")
+                print(f"DERROTA! {data['winner']} venceu o combate...")
             print("==========================================\n")
 
     def run_loop(self) -> None:

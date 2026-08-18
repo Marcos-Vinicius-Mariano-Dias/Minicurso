@@ -36,19 +36,16 @@ def main() -> None:
 
     engine = GameEngine()
 
-    # Se a opção --cli for explicitamente informada
     if args.cli:
         cli_view = CLIView(engine)
         cli_view.run_loop()
     else:
-        # Tenta carregar a GUI de forma segura tratada caso Tkinter não esteja disponível
         try:
             from ui.gui_view import GUIView
             gui_view = GUIView(engine)
             gui_view.start()
         except ImportError as err:
-            print(f"⚠️ Não foi possível carregar a interface gráfica Tkinter: {err}")
-            print("Iniciando modo fallback via terminal (CLI)...")
+            print(f"Não foi possível carregar a interface gráfica Tkinter: {err}")
             cli_view = CLIView(engine)
             cli_view.run_loop()
 

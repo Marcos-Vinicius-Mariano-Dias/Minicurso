@@ -27,7 +27,7 @@ class Character:
         actual_damage = amount
         if self.is_defending:
             actual_damage = int(amount * (1.0 - settings.DEFENSE_DAMAGE_REDUCTION))
-            self.is_defending = False  # Defesa dura 1 ataque
+            self.is_defending = False
 
         damage_taken = min(self.health, max(0, actual_damage))
         self.health -= damage_taken
@@ -56,7 +56,6 @@ class Character:
         bonus = self.weapon.bonus_damage if self.weapon else 0
         base_total = self.base_damage + bonus
 
-        # Checagem de Golpe Crítico
         is_critical = random.random() < settings.CRITICAL_HIT_CHANCE
         if is_critical:
             final_damage = int(base_total * settings.CRITICAL_HIT_MULTIPLIER)
