@@ -13,7 +13,6 @@ from typing import Dict, Any, Optional
 from core.engine import GameEngine
 import config.settings as settings
 
-
 class GUIView:
     """Interface Tkinter conectada ao GameEngine via Observer Pattern."""
 
@@ -25,9 +24,15 @@ class GUIView:
         self.root.title(settings.WINDOW_TITLE)
         self.root.configure(bg=settings.BG_COLOR)
 
+        # Configuração de Tela Cheia Inicial
         self.is_fullscreen: bool = True
         self.root.attributes("-fullscreen", True)
 
+        # Garante a atualização de tarefas do Tkinter antes de aplicar o ícone
+        self.root.update_idletasks()
+        self._load_icon()
+
+        # Atalhos do teclado
         self.root.bind("<Escape>", self._toggle_fullscreen)
         self.root.bind("<F11>", self._toggle_fullscreen)
         self.root.bind("<a>", lambda e: self._on_attack_clicked())
@@ -47,12 +52,38 @@ class GUIView:
 
         self.show_start_screen()
 
+    def _load_icon(self) -> None:
+        """Carrega e aplica o ícone da janela (compatível com KDE/GNOME no Linux)."""
+        dir_ui = os.path.dirname(os.path.abspath(__file__))
+        raiz_projeto = os.path.dirname(dir_ui)
+        caminho_icone = os.path.join(raiz_projeto, "assets", "favicon.png")
+
+        print(f"[icone] procurando em: {caminho_icone}")
+        print(f"[icone] existe? {os.path.exists(caminho_icone)}")
+
+        if not os.path.exists(caminho_icone):
+            print("[icone] AVISO: arquivo não encontrado, ícone padrão será mantido.")
+            return
+
+        try:
+            # Carrega e atribui diretamente à janela root para prevenir Garbage Collection
+            self.icone = tk.PhotoImage(file=caminho_icone)
+            self.root.iconphoto(True, self.icone)
+            self.root._icon_ref = self.icone  # Garante referência forte
+            print("[icone] carregado com sucesso.")
+        except Exception as err:
+            print(f"[icone] ERRO ao carregar: {err}")
+
     def _toggle_fullscreen(self, event: Optional[tk.Event] = None) -> None:
         """Alterna entre modo Tela Cheia e Janela Redimensionável."""
         self.is_fullscreen = not self.is_fullscreen
         self.root.attributes("-fullscreen", self.is_fullscreen)
+
         if not self.is_fullscreen:
             self.root.geometry("1024x720")
+            # Força o Linux/GNOME/KDE a re-vincular o ícone quando a barra de título reaparecer
+            if hasattr(self, "icone"):
+                self.root.iconphoto(True, self.icone)
 
     def _load_sprites(self) -> None:
         """Carrega os sprites visuais em formato PPM/GIF."""
